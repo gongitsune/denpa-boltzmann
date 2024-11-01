@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Projects.UniLBM.Runtime.Lbm.Extension;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Projects.UniLBM.Runtime.Lbm
@@ -10,21 +9,17 @@ namespace Projects.UniLBM.Runtime.Lbm
         private readonly List<ILbmForceSource> _sources = new();
         public IReadOnlyList<ILbmForceSource> Sources => _sources;
 
-        private void Start()
+        public bool AddSource(ILbmForceSource source)
         {
-            var source1 = AddSource<LbmForceSource>();
-            source1.Position = new float3(10, 10, 10);
-            source1.SetForce(0.03f);
+            if (Sources.Count >= LbmForceSourceManager.MaxSourceCount) return false;
+
+            _sources.Add(source);
+            return true;
         }
 
-        public T AddSource<T>() where T : Component, ILbmForceSource
+        public void ClearSources()
         {
-            if (Sources.Count >= LbmForceSourceManager.MaxSourceCount) return null;
-
-            var source = new GameObject().AddComponent<T>();
-            source.transform.SetParent(transform);
-            _sources.Add(source);
-            return source;
+            _sources.Clear();
         }
 
         public void RemoveSource(ILbmForceSource source)

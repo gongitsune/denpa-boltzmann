@@ -56,7 +56,7 @@ def generate_frames():
                 )
 
         # 手の位置を送信
-        udp.sendto(json.dumps(hand_pos_arr).encode(), address)
+        udp.sendto(json.dumps({"positions": hand_pos_arr}).encode(), address)
 
         # 画像を表示
         cv2.imshow("Frame", new_frame)

@@ -1,5 +1,15 @@
 {
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.cysharp.unitask"
+      ]
+    }
+  ],
   "dependencies": {
+    "com.cysharp.unitask": "2.5.10",
     "com.unity.ide.rider": "3.0.34",
     "com.unity.inputsystem": "1.11.2",
     "com.unity.render-pipelines.universal": "17.0.3",

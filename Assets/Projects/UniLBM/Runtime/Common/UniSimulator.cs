@@ -12,7 +12,18 @@ namespace Projects.UniLBM.Runtime.Common
         private ILbmSolver _lbmSolver;
         private LbmParticle _particle;
 
-        private void Initialize()
+        #region Unity Callback
+
+        private void OnDestroy()
+        {
+            _lbmSolver?.Dispose();
+            _particle?.Dispose();
+            _forceSourceManager?.Dispose();
+        }
+
+        #endregion
+
+        public void Initialize()
         {
             _lbmSolver = new D3Q19LbmSolver(lbmShader, cellResolution, new D3Q19LbmSolver.Data
             {
@@ -29,7 +40,7 @@ namespace Projects.UniLBM.Runtime.Common
                 new LbmForceSourceManager(forceSourceShader, _lbmSolver, _particle, forceSourceRoot);
         }
 
-        private void Simulate()
+        public void Simulate()
         {
             _particle.SetData(new LbmParticle.Data
             {
@@ -42,27 +53,6 @@ namespace Projects.UniLBM.Runtime.Common
             _lbmSolver.Update();
             _particle.Update(1 / 60f);
         }
-
-        #region Unity Callback
-
-        private void Start()
-        {
-            Initialize();
-        }
-
-        private void Update()
-        {
-            Simulate();
-        }
-
-        private void OnDestroy()
-        {
-            _lbmSolver.Dispose();
-            _particle.Dispose();
-            _forceSourceManager?.Dispose();
-        }
-
-        #endregion
 
         #region Serialize Field
 
