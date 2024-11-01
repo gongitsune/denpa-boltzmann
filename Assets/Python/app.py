@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import socket
 import json
+import pyvirtualcam
 
 address = ("127.0.0.1", 5000)
 udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -14,7 +15,8 @@ hands = mp_hands.Hands()
 camera = cv2.VideoCapture(0)
 
 
-def generate_frames():
+def generate_frames(virtual_cam: pyvirtualcam.Camera):
+    print("Start generating frames")
     while True:
         # カメラからフレームを読み込む
         success, new_frame = camera.read()
@@ -43,7 +45,7 @@ def generate_frames():
                 screen_x = center_x * width
                 screen_y = center_y * height
 
-                hand_pos_arr.append({"x": center_x, "y": center_y})
+                hand_pos_arr.append({"x": 1 - center_x, "y": 1 - center_y})
 
                 # 手の中心を短径で囲む矩形を描画
                 radius = 50  # 短径のサイズ
@@ -59,14 +61,19 @@ def generate_frames():
         udp.sendto(json.dumps({"positions": hand_pos_arr}).encode(), address)
 
         # 画像を表示
-        cv2.imshow("Frame", new_frame)
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
+        fliped_frame = cv2.cvtColor(cv2.flip(new_frame, 1), cv2.COLOR_BGR2RGB)
+        virtual_cam.send(fliped_frame)
+        # cv2.imshow("Frame", fliped_frame)
+        # if cv2.waitKey(1) & 0xFF == ord("q"):
+        #     break
+        virtual_cam.sleep_until_next_frame()
 
 
 if __name__ == "__main__":
     try:
-        generate_frames()
+        with pyvirtualcam.Camera(width=640, height=480, fps=30) as virtual_cam:
+            print("Virtual camera device: " + virtual_cam.device)
+            generate_frames(virtual_cam)
     finally:
         udp.close()
         camera.release()

@@ -11,6 +11,7 @@ namespace Projects.Scripts
         private ForceSourceUpdater _forceSourceUpdater;
         private HandTrackingClient _handTrackingClient;
         private bool _isInitialized;
+        private PyCam _pyCam;
         private PythonInitializer _pythonInitializer;
         private UniSimulator _uniSimulator;
 
@@ -21,15 +22,30 @@ namespace Projects.Scripts
             _uniSimulator = FindAnyObjectByType<UniSimulator>();
             _forceSourceRoot = FindAnyObjectByType<ForceSourceRoot>();
             _forceSourceUpdater = FindAnyObjectByType<ForceSourceUpdater>();
+            _pyCam = FindAnyObjectByType<PyCam>();
 
-            _pythonInitializer.Initialize();
             _handTrackingClient.Initialize();
+            _pyCam.Initialize().Forget();
             UniTask.Create(async () =>
             {
+                Debug.Log("Wait until receive first data");
+                await UniTask.WhenAny(
+                    UniTask.WaitUntil(() => _handTrackingClient.IsReceiveFirstData),
+                    UniTask.Delay(2000)
+                );
+                if (!_handTrackingClient.IsReceiveFirstData)
+                {
+                    Debug.Log("Failed to receive first data. Launch PythonInitializer");
+                    _pythonInitializer.Initialize();
+                }
+
+                Debug.Log("Wait until receive first data");
                 await UniTask.WaitUntil(() => _handTrackingClient.IsReceiveFirstData);
 
                 _uniSimulator.Initialize();
+                Debug.Log("UniSimulator initialized");
                 _forceSourceUpdater.Initialize(_forceSourceRoot);
+                Debug.Log("ForceSourceUpdater initialized");
 
                 _isInitialized = true;
             });

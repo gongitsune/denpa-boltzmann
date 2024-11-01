@@ -125,10 +125,12 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     - hue_speed: 650
+    - max_size: 0.0015
     - max_velocity: 0.006
-    - min_velocity: 0.00003
-    - particle_length: 1
-    - particle_width: 0.0015
+    - min_size: 0
+    - min_velocity: 0.00002
+    - particle_length: 10
+    - particle_width: 0.003
     - size: 100
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
