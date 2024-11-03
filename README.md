@@ -20,6 +20,8 @@ pip install -r requirements.txt
 ```bash
 python ./app.py
 ```
-で画像認識サーバーを起動します。
+で画像認識サーバーを起動します。  
+このとき、OBS Studioがインストールされていない場合エラーが出て起動できません。  
+OBS Studioをインストールしてから再度試してください。
 
 その後、`WindowsRelease.zip`を解凍して`Denpa Boltzmann.exe`を起動すると風のシミュレーションが行えます。
