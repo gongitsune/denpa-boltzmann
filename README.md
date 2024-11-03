@@ -2,6 +2,12 @@
 
 Webカメラを使用して手を認識し、手の場所から風を出します。
 
+## 環境
+
+- OBS Studio
+- Python LTS
+- DirectX 12
+
 ## 使い方
 
 `Python.zip`をReleaseからダウンロードして、
